@@ -67,49 +67,105 @@ def does_x_start(game):
         return False
 
 
+def menu(gm):
+    if len(gm) != 3:
+        return False
+    global p1_ai, p2_ai
+
+    if gm[1] != 'user':
+        p1_ai = True
+    if gm[2] != 'user':
+        p2_ai = True
+
+    return True
+
+
+def ai_move(symbol):
+    global x, y, x_turn
+
+    print('Making move level "easy"')
+    while True:
+        x = random.randint(0, 2)
+        y = random.randint(0, 2)
+
+        if matrix[x][y] == " ":
+            break
+
+    matrix[x][y] = symbol
+
+
+def player_move(symbol1):
+    global x, y, x_turn
+
+    while True:
+        cords = input("Enter the coordinates: ").split()
+        try:
+            x = int(cords[0])
+            y = int(cords[1])
+        except ValueError:
+            print("You should enter numbers!")
+        else:
+            if x > 3 or x < 1 or y > 3 or y < 1:
+                print("Coordinates should be from 1 to 3!")
+            elif matrix[x - 1][y - 1] != " ":
+                print("This cell is occupied! Choose another one!")
+            else:
+
+                matrix[x - 1][y - 1] = symbol1
+
+                break
+
+
 input_ = "          "
 matrix = [[input_[0], input_[1], input_[2]], [input_[3], input_[4], input_[5]],
           [input_[6], input_[7], input_[8]]]
 
-wyswietl(matrix)
 
-ai_turn = False
+p1_ai = False
+p2_ai = False
+x_turn = 1
+continue_ = True
 
-while True:
-    if ai_turn:
-        print('Making move level "easy"')
-        x = random.randint(0, 2)
-        y = random.randint(0, 2)
-        matrix[x][y] = "O"
-        ai_turn = False
+while continue_:
+    while True:
+        game_mode = input('Input command:').split()
+        if game_mode[0] == 'exit':
+            continue_ = False
+            break
 
-    else:
-        while True:
-            cords = input("Enter the coordinates: ").split()
-            try:
-                x = int(cords[0])
-                y = int(cords[1])
-            except ValueError:
-                print("You should enter numbers!")
-            else:
+        if menu(game_mode):
+            break
+        else:
+            print('Bad parameters!')
 
-                if x > 3 or x < 1 or y > 3 or y < 1:
-                    print("Coordinates should be from 1 to 3!")
-                elif matrix[x - 1][y - 1] != " ":
-                    print("This cell is occupied! Choose another one!")
-                else:
-                    matrix[x - 1][y - 1] = "X"
-                    ai_turn = True
-                    break
+    if not continue_:
+        break
 
     wyswietl(matrix)
 
-    if o_win(matrix):
-        print("O wins")
-        break
-    elif x_won(matrix):
-        print("X wins")
-        break
-    elif not is_finished(matrix):
-        print("Draw")
-        break
+    while True:
+
+        if x_turn:
+            if p1_ai:
+                ai_move("X")
+            else:
+                player_move("X")
+        else:
+            if p2_ai:
+                ai_move("O")
+            else:
+                player_move("O")
+
+        wyswietl(matrix)
+
+        x_turn = not x_turn
+
+        if o_win(matrix):
+            print("O wins")
+            break
+        elif x_won(matrix):
+            print("X wins")
+            break
+        elif not is_finished(matrix):
+            print("Draw")
+            break
