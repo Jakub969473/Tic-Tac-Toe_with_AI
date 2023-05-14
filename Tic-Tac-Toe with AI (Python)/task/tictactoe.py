@@ -1,4 +1,5 @@
 import random
+import ai
 
 
 def x_won(game):
@@ -84,78 +85,14 @@ def ai_move(symbol, level):
     if level == 'easy':
         print('Making move level "easy"')
 
-        ai_easy(symbol)
+        temp = ai.ai_easy(symbol, matrix)
+
     elif level == 'medium':
         print('Making move level "medium"')
 
-        ai_medium(symbol)
+        temp = ai.ai_medium(symbol, matrix)
 
-
-def ai_easy(symbol):
-    global x, y, x_turn
-
-    while True:
-        x = random.randint(0, 2)
-        y = random.randint(0, 2)
-
-        if matrix[x][y] == " ":
-            break
-
-    matrix[x][y] = symbol
-
-
-def ai_medium(symbol):
-    global x, y, x_turn, matrix
-
-    cords = two_in_row(symbol)
-
-    if cords is None:
-        if symbol == 'X':
-            cords = two_in_row('O')
-        else:
-            cords = two_in_row('X')
-
-    if cords is not None:
-
-        if matrix[cords[0][0]][cords[0][1]] == matrix[cords[1][0]][cords[1][1]]:
-
-            matrix[cords[2][0]][cords[2][1]] = symbol
-            print(1)
-
-        elif matrix[cords[0][0]][cords[0][1]] == matrix[cords[2][0]][cords[2][1]]:
-
-            matrix[cords[1][0]][cords[1][1]] = symbol
-            print(2)
-
-        elif matrix[cords[1][0]][cords[1][1]] == matrix[cords[2][0]][cords[2][1]]:
-
-            matrix[cords[0][0]][cords[0][1]] = symbol
-            print(3)
-    else:
-        ai_easy(symbol)
-
-
-def two_in_row(symbol):
-    cords = (
-        ((0, 0), (0, 1), (0, 2)),
-        ((1, 0), (1, 1), (1, 2)),
-        ((2, 0), (2, 1), (2, 2)),
-    )
-
-    for i in cords:
-        if [matrix[i[0][0]][i[0][1]], matrix[i[1][0]][i[1][1]], matrix[i[2][0]][i[2][1]]].count(symbol) == 2:
-            if [matrix[i[0][0]][i[0][1]], matrix[i[1][0]][i[1][1]], matrix[i[2][0]][i[2][1]]].count(' ') > 0:
-                return i
-        elif [matrix[i[0][1]][i[0][0]], matrix[i[1][1]][i[1][0]], matrix[i[2][1]][i[2][0]]].count(symbol) == 2:
-            if [matrix[i[0][1]][i[0][0]], matrix[i[1][1]][i[1][0]], matrix[i[2][1]][i[2][0]]].count(' ') > 0:
-                return ((i[0][1], i[0][0]), (i[1][1], i[1][0]), (i[2][1], i[2][0]))
-
-    if [matrix[0][0], matrix[1][1], matrix[2][2]].count(symbol) == 2:
-        if [matrix[0][0], matrix[1][1], matrix[2][2]].count(' ') > 0:
-            return ((0, 0), (1, 1), (2, 2))
-    elif [matrix[0][2], matrix[1][1], matrix[2][0]].count(symbol) == 2:
-        if [matrix[0][2], matrix[1][1], matrix[2][0]].count(' ') > 0:
-            return ((0, 2), (1, 1), (2, 0))
+    matrix[temp[0]][temp[1]] = symbol
 
 
 def player_move(symbol1):
