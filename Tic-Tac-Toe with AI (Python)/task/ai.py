@@ -1,6 +1,18 @@
 import random
 
 
+class Move:
+    def __init__(self):
+        self.score = int(0)
+        self.index = []
+
+    def get_score(self):
+        return self.score
+
+    def __str__(self):
+        return f'{self.score} {self.index}'
+
+
 def ai_easy(symbol, matrix):
     global x, y, x_turn
 
@@ -63,3 +75,86 @@ def two_in_row(symbol, matrix):
     elif [matrix[0][2], matrix[1][1], matrix[2][0]].count(symbol) == 2:
         if [matrix[0][2], matrix[1][1], matrix[2][0]].count(' ') > 0:
             return ((0, 2), (1, 1), (2, 0))
+
+
+def ai_hard(symbol, matrix):
+    if symbol == 'O':
+        move = minimax(matrix, symbol, 'X', 'O')
+    else:
+        move = minimax(matrix, symbol, 'O', 'X')
+
+    return [move.index[0], move.index[1]]
+
+
+def winning(game, symbol):
+    for i in range(0, 3):
+        if game[i][0] == game[i][1] == game[i][2] == symbol:
+            return True
+        elif game[0][i] == game[1][i] == game[2][i] == symbol:
+            return True
+    if game[0][0] == game[1][1] == game[2][2] == symbol:
+        return True
+    if game[0][2] == game[1][1] == game[2][0] == symbol:
+        return True
+    return False
+
+
+def empty_indexies(matrix):
+    empty = []
+    for row in range(0, 3):
+        for column in range(0, 3):
+            if matrix[row][column] == " ":
+                empty.append([row, column])
+    return empty
+
+
+def minimax(newBoard, symbol, p1, p2):
+    avail_spots = empty_indexies(newBoard)
+
+    if winning(newBoard, p2):
+        return -10
+    elif winning(newBoard, p1):
+        return 10
+    elif len(avail_spots) == 0:
+        return 0
+
+    moves = []
+
+    for i in avail_spots:
+        move = Move()
+        move.index = i
+
+        newBoard[i[0]][i[1]] = symbol
+
+        if symbol == p1:
+            result = minimax(newBoard, p2, p1, p2)
+        else:
+            result = minimax(newBoard, p1, p1, p2)
+
+        if isinstance(result, int):
+            move.score = result
+        else:
+            move.score = result.score
+
+        newBoard[i[0]][i[1]] = ' '
+
+        moves.append(move)
+
+    best_move = 0
+    if symbol == p1:
+        best_score = -1000000
+        for j in moves:
+            test = int(str(j.get_score()))
+            if test > best_score:
+                best_score = test
+                best_move = j
+    else:
+        best_score = 1000000
+        for j in moves:
+            test = j.score
+            if test < best_score:
+                best_score = test
+                best_move = j
+
+    return best_move
+

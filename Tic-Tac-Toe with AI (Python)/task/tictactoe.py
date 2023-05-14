@@ -77,6 +77,7 @@ def menu(gm):
 
     p1 = gm[1]
     p2 = gm[2]
+    print(p1, " ", p2)
 
     return True
 
@@ -91,6 +92,11 @@ def ai_move(symbol, level):
         print('Making move level "medium"')
 
         temp = ai.ai_medium(symbol, matrix)
+
+    elif level == 'hard':
+        print('Making move level "hard"')
+
+        temp = ai.ai_hard(symbol, matrix)
 
     matrix[temp[0]][temp[1]] = symbol
 
@@ -113,63 +119,67 @@ def player_move(symbol1):
             else:
 
                 matrix[x - 1][y - 1] = symbol1
-
                 break
 
 
-input_ = '               '
-matrix = [[input_[0], input_[1], input_[2]], [input_[3], input_[4], input_[5]],
-          [input_[6], input_[7], input_[8]]]
+if __name__ == '__main__':
 
-p1 = 'user'
-p2 = 'user'
-x_turn = 1
-continue_ = True
-possible_commands = ('start', 'end', 'easy', 'medium', 'hard', 'user')
+    input_ = '               '
+    matrix = [[input_[0], input_[1], input_[2]], [input_[3], input_[4], input_[5]],
+              [input_[6], input_[7], input_[8]]]
 
-while continue_:
-    while True:
-        game_mode = input('Input command:').split()
-        if game_mode[0] == 'exit':
-            continue_ = False
-            break
+    p1 = 'user'
+    p2 = 'user'
+    x_turn = 1
+    continue_ = True
+    possible_commands = ('start', 'end', 'easy', 'medium', 'hard', 'user')
 
-        if menu(game_mode):
-            break
-        else:
-            print('Bad parameters!')
+    while continue_:
+        while True:
+            game_mode = input('Input command:').split()
+            if game_mode[0] == 'exit':
+                continue_ = False
+                break
 
-    if not continue_:
-        break
-
-    wyswietl(matrix)
-
-    while True:
-
-        if x_turn:
-            if p1 != 'user':
-                ai_move("X", p1)
+            if menu(game_mode):
+                break
             else:
-                player_move("X")
-        else:
-            if p2 != 'user':
-                ai_move("O", p2)
-            else:
-                player_move("O")
+                print('Bad parameters!')
+
+        if not continue_:
+            break
 
         wyswietl(matrix)
 
-        x_turn = not x_turn
+        while True:
 
-        if o_win(matrix):
-            print("O wins")
-            break
-        elif x_won(matrix):
-            print("X wins")
-            break
-        elif not is_finished(matrix):
-            print("Draw")
-            break
+            if x_turn:
+                if p1 == 'user':
+                    player_move("X")
+                else:
+                    ai_move("X", p1)
 
-    matrix = [[input_[0], input_[1], input_[2]], [input_[3], input_[4], input_[5]],
-          [input_[6], input_[7], input_[8]]]
+            else:
+                if p2 == 'user':
+                    player_move("O")
+                else:
+                    ai_move("O", p2)
+
+
+            wyswietl(matrix)
+
+            x_turn = not x_turn
+
+            if o_win(matrix):
+                print("O wins")
+                break
+            elif x_won(matrix):
+                print("X wins")
+                break
+            elif not is_finished(matrix):
+                print("Draw")
+                break
+
+        x_turn = True
+        matrix = [[input_[0], input_[1], input_[2]], [input_[3], input_[4], input_[5]],
+                  [input_[6], input_[7], input_[8]]]
